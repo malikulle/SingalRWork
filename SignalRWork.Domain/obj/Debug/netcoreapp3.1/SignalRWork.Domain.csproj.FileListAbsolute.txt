@@ -1,0 +1,12 @@
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\bin\Debug\netcoreapp3.1\SignalRWork.Domain.deps.json
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\bin\Debug\netcoreapp3.1\SignalRWork.Domain.runtimeconfig.json
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\bin\Debug\netcoreapp3.1\SignalRWork.Domain.runtimeconfig.dev.json
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\bin\Debug\netcoreapp3.1\SignalRWork.Domain.dll
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\bin\Debug\netcoreapp3.1\SignalRWork.Domain.pdb
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.csprojAssemblyReference.cache
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.AssemblyInfoInputs.cache
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.AssemblyInfo.cs
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.csproj.CoreCompileInputs.cache
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.dll
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.pdb
+C:\Users\malik\source\repos\SinalRWork\SignalRWork.Domain\obj\Debug\netcoreapp3.1\SignalRWork.Domain.genruntimeconfig.cache

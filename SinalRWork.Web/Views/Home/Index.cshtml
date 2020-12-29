@@ -1,0 +1,204 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <input class="form-control" type="text" id="txtName" />
+        <hr />
+        <button class="btn btn-primary" id="btnNameSave">İsim kaydet</button>
+        <button class="btn btn-secondary" id="btnNameTeam">İsim Kaydet(Takım)</button>
+        <button class="btn btn-danger" id="btnProduct">Ürün kaydet</button>
+        <div class="alert alert-info mt-2">
+            <div class="float-left">
+                Bağlantı durumu : <strong id="conStatus"></strong>
+                , Client Count : <strong id="clientCount"></strong>
+
+            </div>
+            <div class="float-right">
+                <div class="spinner-border" id="loading" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div id="notify"></div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="TeamGroup" value="Team A" />
+            <label class="form-check-label">A TAKIMI</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="TeamGroup" value="Team B" />
+            <label class="form-check-label">B TAKIMI</label>
+        </div>
+    </div>
+    <div class="col-md-8 offset-2">
+        <div class="row">
+            <div class="col-md-6">
+                <ul id="ATeamList">
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul id="BTeamList">
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+@section Scripts
+{
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            var conenction = new signalR.HubConnectionBuilder()
+                .configureLogging(signalR.LogLevel.Debug)
+                .withAutomaticReconnect([1000, 1000, 3000, 3000])
+                .withUrl("https://localhost:44346/MyHub").build();
+            console.log(conenction)
+
+            function statusShow() {
+                $("#conStatus").text(conenction.connectionState);
+            }
+            statusShow()
+
+            function Start() {
+                conenction.start()
+                    .then(() => {
+                        statusShow()
+                        $("#loading").hide()
+
+                        //conenction.invoke("GetNames")
+                        conenction.invoke("GetNamesByGroup")
+
+
+                    }).catch(err => {
+                        console.log(err)
+                    })
+            }
+
+            Start()
+
+            conenction.onreconnecting(err => {
+                $("#loading").show()
+                statusShow()
+            })
+
+            conenction.onreconnected(connectionId => {
+                $("#loading").hide()
+                statusShow()
+            })
+
+            conenction.onclose(() => {
+                $("#loading").hide()
+                statusShow()
+                Start()
+            })
+
+            conenction.on("ReceiveClientCount", (clientCount) => {
+                $("#clientCount").text(clientCount);
+            })
+
+            conenction.on("ReceiveName", (name) => {
+                $("#namesList").append(`<li class="list-group-item">${name}</li>`)
+            })
+
+            conenction.on("Notify", (countText) => {
+                $("#notify").html(`<div class="alert alert-success">
+                                        ${countText}
+                                </div>`)
+            })
+
+            conenction.on("ReceiveNames", (names) => {
+                $("#namesList").empty();
+                names.forEach(name => $("#namesList").append(`<li class="list-group-item">${name}</li>`))
+            })
+
+            conenction.on("Error", (err) => {
+                alert(err);
+            })
+
+            conenction.on("ReceiveMessageByGroup", (name, teamId) => {
+                let listName = ""
+                if (teamId == 1) {
+                    listName = "ATeamList"
+                } else {
+                    listName = "BTeamList"
+                }
+                $(`#${listName}`).append(`<li class="list-group-item">${name}</li>`)
+            })
+
+            conenction.on("ReceiveNamesByGroup", (teams) => {
+                $("#ATeamList").empty()
+                $("#BTeamList").empty()
+                teams.forEach(team => {
+                    let listName = ""
+                    if (team.teamId == 1) {
+                        listName = "ATeamList"
+                    } else {
+                        listName = "BTeamList"
+                    }
+
+                    team.users.forEach(user => {
+                        $(`#${listName}`).append(`<li class="list-group-item">${user.name}</li>`)
+                    })
+                })
+
+            })
+
+            conenction.on("ReceiveProduct", (product) => {
+
+                console.log(product)
+            })
+
+
+            $("#btnNameSave").click(() => {
+                conenction.invoke("SendName", $("#txtName").val())
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            })
+
+            $("#btnNameTeam").click(() => {
+                let name = $("#txtName").val()
+                let teamName = $("input[type=radio]:checked").val()
+
+                if (teamName) {
+                    conenction.invoke("SendNameByGroup", name, teamName).catch((err) => console.log(err));
+                }
+
+            })
+
+            $("input[type=radio]").change(() => {
+                let value = $("input[type=radio]:checked").val()
+
+                if (value == "Team A") {
+                    conenction.invoke("AddToGroup", "Team A")
+                    conenction.invoke("RemoveToGroup", "Team B")
+                } else {
+                    conenction.invoke("AddToGroup", "Team B")
+                    conenction.invoke("RemoveToGroup", "Team A")
+                }
+            })
+
+            $("#btnProduct").click(() => {
+                let product = {
+                    id: 1,
+                    name: "kalem"
+                }
+                conenction.invoke("SendProduct", product)
+            })
+
+        });
+
+    </script>
+}
